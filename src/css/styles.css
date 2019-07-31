@@ -16,7 +16,10 @@ hr,
 .card-container {
     padding: 5px;
 }
-
+.card {
+    min-height: 210px;
+    padding: 1rem;
+}
 .card-title {
     color: #4285f4;
     font-weight: 500;
@@ -24,9 +27,16 @@ hr,
 }
 
 .card-description {
-    font-size: 15px;
+    font-size: 14px;
+    height: 100px;
 }
 
 .card-date {
     font-size: 12px;
+    position: absolute;
+    bottom: 0;
+}
+.error-msg {
+    text-align: center;
+    margin-top: 15%;
 }
