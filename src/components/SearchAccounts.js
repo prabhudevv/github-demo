@@ -8,7 +8,8 @@ export default class SearchFilter extends Component {
         super();
         this.state = {
             content: '',
-            data: {}
+            data: {},
+            error_msg: 'Search for github repositories'
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmitForm = this.handleSubmitForm.bind(this);
@@ -28,7 +29,10 @@ export default class SearchFilter extends Component {
                     data: response.data.items
                 })
             }).catch(err => {
-                console.log(err)
+                this.setState({
+                    error_msg: err.response.data.errors[0].message,
+                    data: []
+                })
             })
     }
 
@@ -36,17 +40,17 @@ export default class SearchFilter extends Component {
         let result = this.state.data;
         const postList = result.length ? (
             result.map(post => {
-                const  date = new Date(post.updated_at);
+                const date = new Date(post.updated_at);
 
                 var hours = date.getHours();
                 var minutes = date.getMinutes();
                 var ampm = hours >= 12 ? 'PM' : 'AM';
                 hours = hours % 12;
                 hours = hours ? hours : 12;
-                minutes = minutes < 10 ? '0'+minutes : minutes;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
                 var strTime = hours + ':' + minutes + '' + ampm;
-               
-                const res = date.getDate() +'/' + (date.getMonth()+1) + '/'+ date.getFullYear() + ', '+ strTime;
+
+                const res = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ', ' + strTime;
                 return (
                     <div className="col-md-2 card-container" key={post.id}>
                         <div className="card">
@@ -62,7 +66,7 @@ export default class SearchFilter extends Component {
                 )
             })
         ) : (
-                <MDBCol className="error-msg"><h1>No Github repositories....</h1></MDBCol>
+                <MDBCol className="col-md-6 offset-md-3 error-msg"><h3>{this.state.error_msg}</h3></MDBCol>
             )
         return (
             <div>
