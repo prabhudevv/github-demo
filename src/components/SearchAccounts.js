@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { MDBRow, MDBCol, MDBInput, MDBBtn } from "mdbreact";
 import axios from 'axios';
-
-export default class SearchFilter extends Component {
+import { connect } from 'react-redux'
+var dataUsr = {};
+class SearchFilter extends Component {
 
     constructor() {
         super();
@@ -19,29 +20,31 @@ export default class SearchFilter extends Component {
         this.setState({
             content: e.target.value
         })
+        e.preventDefault();
     }
 
     handleSubmitForm(event) {
         event.preventDefault();
         axios.get(`https://api.github.com/search/repositories?q=user:${this.state.content}+is:public`)
             .then(response => {
-                this.setState({
+                dataUsr = {
                     data: response.data.items
-                })
+                }
+                this.props.allUser();
             }).catch(err => {
-                this.setState({
+                dataUsr = {
                     error_msg: err.response.data.errors[0].message,
                     data: []
-                })
+                }
+                this.props.allUser();
             })
     }
 
     render() {
-        let result = this.state.data;
+        let result = this.props.users;
         const postList = result.length ? (
             result.map(post => {
                 const date = new Date(post.updated_at);
-
                 var hours = date.getHours();
                 var minutes = date.getMinutes();
                 var ampm = hours >= 12 ? 'PM' : 'AM';
@@ -66,8 +69,9 @@ export default class SearchFilter extends Component {
                 )
             })
         ) : (
-                <MDBCol className="col-md-6 offset-md-3 error-msg"><h3>{this.state.error_msg}</h3></MDBCol>
+                <MDBCol className="col-md-6 offset-md-3 error-msg"><h3>{dataUsr.error_msg}</h3></MDBCol>
             )
+
         return (
             <div>
                 <MDBRow>
@@ -89,3 +93,20 @@ export default class SearchFilter extends Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        users: state.rootReducer.users
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        allUser: async () => dispatch({
+            type: "USER_LIST",
+            payload: dataUsr.data
+        })
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchFilter);
