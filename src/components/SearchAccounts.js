@@ -16,6 +16,14 @@ class SearchFilter extends Component {
         this.handleSubmitForm = this.handleSubmitForm.bind(this);
     }
 
+    async componentDidMount() {
+        dataUsr = {
+            error_msg: 'Search for github repositories',
+            data: []
+        }
+        this.props.allUser();
+    }
+
     handleChange = (e) => {
         this.setState({
             content: e.target.value
